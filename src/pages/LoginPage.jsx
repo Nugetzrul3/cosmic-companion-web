@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 // Login API
 const LOGIN = gql`
     mutation Login($email: String!, $password: String!) {
-        login(email: $email, password: $password) {
+        login(data: {email: $email, password: $password}) {
+            refreshToken
             token
             user {
                 email
@@ -18,7 +19,7 @@ const LOGIN = gql`
 export const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [login, { loading, _ }] = useMutation(LOGIN);
+    const [login, { loading }] = useMutation(LOGIN);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
