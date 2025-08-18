@@ -1,29 +1,9 @@
-import { gql, useMutation } from "@apollo/client"
+import { useMutation } from "@apollo/client"
 import React, { useState } from 'react';
 import { toast } from "react-toastify";
-import {useNavigate} from "react-router-dom";
-
-// Login API
-const REGISTER = gql`
-    mutation Register(
-        $firstName: String!, $lastName: String!, $username: String!,
-        $email: String!, $password: String!
-    ) {
-        signup(
-            data: {
-                firstName: $firstName, lastName: $lastName, username: $username, 
-                email: $email, password: $password
-            }
-        ) {
-            refreshToken
-            token
-            user {
-                email
-            }
-            error
-        }
-    }
-`;
+import { useNavigate } from "react-router-dom";
+import { Mutations } from "../../mutations";
+import { CustomToast } from "../components/CustomToast";
 
 export const RegisterPage = () => {
     const [firstName, setFirstName] = useState("");
@@ -31,17 +11,31 @@ export const RegisterPage = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [signup, { loading }] = useMutation(REGISTER);
+    const [signup, { loading }] = useMutation(Mutations.getRegisterMutation());
     const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const res = await signup({ variables: { firstName, lastName, username, email, password } });
         if (res.data.signup.error) {
-            toast.error("Error with signup: " + res.data.signup.error)
+            toast(CustomToast, {
+                data: {
+                    title: "Error!",
+                    content: res.data.signup.error,
+                },
+                autoClose: 4000,
+                toastId: 'register-error'
+            });
         } else {
             localStorage.setItem('token', res.data.signup.token);
-            toast.success('Signed up successfully');
+            toast(CustomToast, {
+                data: {
+                    title: "Success!",
+                    content: "Registration Successful"
+                },
+                autoClose: 4000,
+                toastId: 'register-success'
+            });
             navigate("/")
         }
     };
