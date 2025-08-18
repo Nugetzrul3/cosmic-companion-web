@@ -1,35 +1,36 @@
-import { gql, useMutation } from "@apollo/client"
+import { useMutation } from "@apollo/client"
 import React, { useState } from 'react';
 import { toast } from "react-toastify";
-
-// Login API
-const LOGIN = gql`
-    mutation Login($email: String!, $password: String!) {
-        login(data: {email: $email, password: $password}) {
-            refreshToken
-            token
-            user {
-                email
-            }
-            error
-        }
-    }
-`;
+import { Mutations } from "../../apollo/mutations";
+import { CustomToast } from "../../components/CustomToast";
 
 export const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [login, { loading }] = useMutation(LOGIN);
+    const [login, { loading }] = useMutation(Mutations.getLoginMutation());
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const res = await login({ variables: { email: email, password: password } });
-        console.log(res);
         if (res.data.login.error) {
-            toast.error("Error with login: " + res.data.login.error)
+            toast(CustomToast, {
+                data: {
+                    title: "Error!",
+                    content: res.data.login.error,
+                },
+                autoClose: 4000,
+                toastId: 'login-error'
+            });
         } else {
             localStorage.setItem('token', res.data.login.token);
-            toast.success('Logged in successfully');
+            toast(CustomToast, {
+                data: {
+                    title: "Success!",
+                    content: "Logged in successfully",
+                },
+                autoClose: 4000,
+                toastId: 'login-success'
+            })
         }
     };
 
