@@ -2,8 +2,8 @@ import { useMutation } from "@apollo/client"
 import React, { useState } from 'react';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { Mutations } from "../../mutations";
-import { CustomToast } from "../components/CustomToast";
+import { Mutations } from "../../apollo/mutations";
+import { CustomToast } from "../../components/CustomToast";
 
 export const RegisterPage = () => {
     const [firstName, setFirstName] = useState("");

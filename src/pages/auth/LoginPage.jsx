@@ -1,8 +1,8 @@
 import { useMutation } from "@apollo/client"
 import React, { useState } from 'react';
 import { toast } from "react-toastify";
-import { Mutations } from "../../mutations";
-import { CustomToast } from "../components/CustomToast";
+import { Mutations } from "../../apollo/mutations";
+import { CustomToast } from "../../components/CustomToast";
 
 export const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -12,7 +12,6 @@ export const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const res = await login({ variables: { email: email, password: password } });
-        console.log(res);
         if (res.data.login.error) {
             toast(CustomToast, {
                 data: {

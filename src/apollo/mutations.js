@@ -36,6 +36,16 @@ export const Mutations = {
                 }
             }
         `
+    },
+    getRefreshTokenMutation: () => {
+        return gql`
+            mutation Refresh($token: String!) {
+                refresh(token: $token) {
+                    token
+                    error
+                }
+            }
+        `
     }
 
 }
