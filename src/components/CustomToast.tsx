@@ -1,4 +1,11 @@
-export const CustomToast = ({ data }) => {
+import type { ToastContentProps } from "react-toastify";
+
+type CustomToastProps = ToastContentProps<{
+    title: string;
+    content: string;
+}>;
+
+export const CustomToast = ({ data }: CustomToastProps) => {
     return (
         <div className="flex flex-col w-full">
             <h3>
