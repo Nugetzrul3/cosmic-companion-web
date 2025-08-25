@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client"
+import { useMutation } from "@apollo/client/react"
 import React, { useState } from 'react';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -14,26 +14,27 @@ export const RegisterPage = () => {
     const [signup, { loading }] = useMutation(Mutations.getRegisterMutation());
     const navigate = useNavigate()
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const res = await signup({ variables: { firstName, lastName, username, email, password } });
-        if (res.data.signup.error) {
+        const { data } = await signup({ variables: { firstName, lastName, username, email, password } });
+
+        if (!data) return;
+
+        if (data.signup.error) {
             toast(CustomToast, {
                 data: {
                     title: "Error!",
-                    content: res.data.signup.error,
+                    content: data.signup.error,
                 },
-                autoClose: 4000,
                 toastId: 'register-error'
             });
         } else {
-            localStorage.setItem('token', res.data.signup.token);
+            localStorage.setItem('token', data.signup.token ?? "");
             toast(CustomToast, {
                 data: {
                     title: "Success!",
                     content: "Registration Successful"
                 },
-                autoClose: 4000,
                 toastId: 'register-success'
             });
             navigate("/")
@@ -48,6 +49,7 @@ export const RegisterPage = () => {
             Username: <input type='text' onChange={e => setUsername(e.target.value)} />
             Email: <input type='email' onChange={e => setEmail(e.target.value)} />
             Password: <input type='password' onChange={e => setPassword(e.target.value)} />
+            {loading && <h2>Loading...</h2>}
             <button type="submit" disabled={loading}>Login</button>
         </form>
     )

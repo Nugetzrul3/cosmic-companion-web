@@ -1,8 +1,18 @@
 import { gql } from "@apollo/client";
+import type {
+    TypedDocumentNode,
+    LoginMutation,
+    SignupMutation,
+    LoginMutationVariables,
+    SignupMutationVariables
+} from "./types";
 
 export const Mutations = {
     getLoginMutation: () => {
-        return gql`
+        const LOGIN_MUTATION: TypedDocumentNode<
+            LoginMutation,
+            LoginMutationVariables
+        > = gql`
             mutation Login($email: String!, $password: String!) {
                 login(data: {email: $email, password: $password}) {
                     refreshToken
@@ -13,10 +23,15 @@ export const Mutations = {
                     error
                 }
             }
-        `
+        `;
+
+        return LOGIN_MUTATION;
     },
     getRegisterMutation: () => {
-        return gql`
+        const SIGNUP_MUTATION: TypedDocumentNode<
+            SignupMutation,
+            SignupMutationVariables
+        > = gql`
             mutation Register(
                 $firstName: String!, $lastName: String!, $username: String!,
                 $email: String!, $password: String!
@@ -35,17 +50,9 @@ export const Mutations = {
                     error
                 }
             }
-        `
-    },
-    getRefreshTokenMutation: () => {
-        return gql`
-            mutation Refresh($token: String!) {
-                refresh(token: $token) {
-                    token
-                    error
-                }
-            }
-        `
+        `;
+
+        return SIGNUP_MUTATION;
     }
 
 }
