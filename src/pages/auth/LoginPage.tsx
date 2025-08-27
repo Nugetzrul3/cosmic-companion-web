@@ -1,40 +1,66 @@
 import { useMutation } from "@apollo/client/react"
-import React, { useState } from 'react';
-import { toast } from "react-toastify";
+import React, {useEffect, useState} from 'react';
+import { useToast } from "../../hooks/useToast.tsx";
 import { Mutations } from "../../apollo/mutations";
-import { CustomToast } from "../../components/CustomToast";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [login, { loading}] = useMutation(Mutations.getLoginMutation());
+    const [login, { loading, error }] = useMutation(Mutations.getLoginMutation());
     const navigate = useNavigate();
+    const { showToast } = useToast();
+
+    useEffect(() => {
+        if (error) {
+            showToast({
+                data: {
+                    title: "Unexpected Error!",
+                    content: "Something went wrong! Please try again later",
+                },
+                type: "error",
+                options: {
+                    toastId: "login-error"
+                }
+            });
+            return;
+        }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [error]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log('CAME HEREE 1')
         const { data } = await login({ variables: { email: email, password: password } });
+        console.log('CAME HEREE 2')
 
         if (!data) return;
 
         if (data.login.error) {
-            toast(CustomToast, {
+            showToast({
                 data: {
                     title: "Error!",
                     content: data.login.error,
                 },
-                toastId: 'login-error'
+                type: "error",
+                options: {
+                    toastId: "login-error"
+                }
             });
         } else {
             localStorage.setItem('token', data.login.token ?? "");
-            toast(CustomToast, {
+            showToast({
                 data: {
                     title: "Success!",
-                    content: "Logged in successfully",
+                    content: "Logged in successfully!",
                 },
-                toastId: 'login-success'
+                options: {
+                    toastId: "login-success"
+                }
             });
-            navigate("/");
+            setTimeout(() => {
+                navigate("/")
+            }, 2000);
         }
     };
 
