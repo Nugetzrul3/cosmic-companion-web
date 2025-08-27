@@ -1,9 +1,8 @@
 import { useMutation } from "@apollo/client/react"
-import React, { useState } from 'react';
-import { toast } from "react-toastify";
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from "react-router-dom";
 import { Mutations } from "../../apollo/mutations";
-import { CustomToast } from "../../components/CustomToast";
+import { useToast } from "../../hooks/useToast.tsx";
 
 export const RegisterPage = () => {
     const [firstName, setFirstName] = useState("");
@@ -11,8 +10,26 @@ export const RegisterPage = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [signup, { loading }] = useMutation(Mutations.getRegisterMutation());
+    const [signup, { loading, error }] = useMutation(Mutations.getRegisterMutation());
     const navigate = useNavigate()
+    const { showToast } = useToast();
+
+    useEffect(() => {
+        if (error) {
+            showToast({
+                data: {
+                    title: "Unexpected Error!",
+                    content: "Something went wrong! Please try again later",
+                },
+                type: "error",
+                options: {
+                    toastId: "register-error"
+                }
+            });
+            return;
+        }
+        //eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [error]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -21,23 +38,30 @@ export const RegisterPage = () => {
         if (!data) return;
 
         if (data.signup.error) {
-            toast(CustomToast, {
+            showToast({
                 data: {
                     title: "Error!",
                     content: data.signup.error,
                 },
-                toastId: 'register-error'
-            });
+                type: "error",
+                options: {
+                    toastId: "register-error",
+                }
+            })
         } else {
             localStorage.setItem('token', data.signup.token ?? "");
-            toast(CustomToast, {
+            showToast({
                 data: {
                     title: "Success!",
-                    content: "Registration Successful"
+                    content: "Registration Successful",
                 },
-                toastId: 'register-success'
-            });
-            navigate("/")
+                options: {
+                    toastId: "register-success",
+                }
+            })
+            setTimeout(() => {
+                navigate("/")
+            }, 2000);
         }
     };
 
