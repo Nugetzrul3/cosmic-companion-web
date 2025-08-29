@@ -1,8 +1,7 @@
 import { toast} from "react-toastify";
 import type { ToastOptions, Id, ToastContentProps } from "react-toastify";
 import type { ReactElement } from "react";
-import { BasicToast } from "../components/BasicToast.tsx";
-
+import { BasicToast } from "../components/toasts/BasicToast.tsx";
 interface ToastConfig extends Omit<ToastOptions, 'type'> {
     position?: ToastOptions['position'];
     autoClose?: number | false;
