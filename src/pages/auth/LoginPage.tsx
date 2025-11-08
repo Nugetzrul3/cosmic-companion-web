@@ -30,9 +30,7 @@ export const LoginPage = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('CAME HEREE 1')
         const { data } = await login({ variables: { email: email, password: password } });
-        console.log('CAME HEREE 2')
 
         if (!data) return;
 

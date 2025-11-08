@@ -74,7 +74,7 @@ export const RegisterPage = () => {
             Email: <input type='email' onChange={e => setEmail(e.target.value)} />
             Password: <input type='password' onChange={e => setPassword(e.target.value)} />
             {loading && <h2>Loading...</h2>}
-            <button type="submit" disabled={loading}>Login</button>
+            <button type="submit" disabled={loading}>Register</button>
         </form>
     )
 
